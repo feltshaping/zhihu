@@ -1,0 +1,15 @@
+const Koa=require('koa')
+const bodyParser=require('koa-bodyparser')
+const error=require('koa-json-error')
+const parameter=require('koa-parameter')
+const mongoose=require('mongoose')
+const rounting=require('./routes')
+const app=new Koa()
+const {connectionStr}=require('./config')
+app.use(error({
+    postFormat:(e,{stack,...rest})=>process.env.NODE_ENV==='production'?rest:{stack,...stack}
+}))
+app.use(parameter(app))
+mongoose.connect(connectionStr,()=>console.log('mongodb 连接成功'))
+rounting(app)
+app.listen(3000,()=>console.log('程序启动在3000'))
